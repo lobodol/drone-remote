@@ -1,4 +1,15 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
 html {
   background-color: grey;
 }
 
+* {
+  box-sizing: border-box;
+  outline: none;
+}
