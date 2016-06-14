@@ -49,3 +49,7 @@ var app = {
 };
 
 app.initialize();
+
+$(function () {
+    Joystick.init();
+});
