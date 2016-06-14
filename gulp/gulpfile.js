@@ -25,7 +25,7 @@ gulp.task('concat', function() {
     return gulp.src('../assets/js/*js')
         .pipe(concat('all.js'))
         .pipe(uglify())
-        .pipe(gulp.dest('www/js'));
+        .pipe(gulp.dest('../www/js'));
 });
 
 /**
