@@ -1,0 +1,1 @@
+var Joystick={yaw:0,pitch:0,roll:0,throttle:0,init:function(){$("#remote .joystick .pad").draggable({drag:function(o,i){Remote.isInsideCircle(i.position.left,-i.position.top)?console.log("inside"):console.log("outside")}})},isInsideCircle:function(o,i){var t=!1,e=200,n=e/2,s=e/2,l=-e/2,r=Math.pow(o-s,2)+Math.pow(i-l,2),a=Math.pow(n,2);return a>=r&&(t=!0),t}};
