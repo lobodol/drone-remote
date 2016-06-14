@@ -2,28 +2,35 @@
  * Remote control
  */
 var Joystick = {
+
     /**
+     * [0, 360]
      * @var number
      */
     yaw: 0,
 
     /**
+     * [0, 900]
      * @var number
      */
     pitch: 0,
 
     /**
+     * [0, 900]
      * @var number
      */
     roll: 0,
 
     /**
+     * [0, 100]
      * @var number
      */
     throttle: 0,
 
     /**
      * Initialisation
+     *
+     * @return boolean
      */
     init: function() {
         $('#remote .joystick .pad').draggable({
@@ -31,6 +38,16 @@ var Joystick = {
                 if ( ! Joystick.isInsideCircle(ui.position.left, -ui.position.top) ) {
                     return false;
                 }
+
+                var parent = $(this).parent().attr('id');
+
+                if (parent == 'rjoystick') {
+                    Joystick.updateYawThrottle(ui.position.left, -ui.position.top);
+                } else if (parent == 'ljoystick') {
+                    Joystick.updatePitchRoll(ui.position.left, -ui.position.top);
+                }
+
+                return false;
             }
         });
     },
@@ -65,5 +82,25 @@ var Joystick = {
         }
 
         return isInside;
+    },
+
+    /**
+     * Update yaw & throttle values from the pad coordinates.
+     *
+     * @param number x : absciss of the pad.
+     * @param number y : ordinate of the pad.
+     */
+    updateYawThrottle: function (x, y) {
+
+    },
+
+    /**
+     * Update pitch & roll from the pad coordinates.
+     *
+     * @param number x : absciss of the pad.
+     * @param number y : ordinate of the pad.
+     */
+    updatePitchRoll: function(x, y) {
+
     }
 };
