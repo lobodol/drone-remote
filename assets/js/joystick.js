@@ -28,10 +28,8 @@ var Joystick = {
     init: function() {
         $('#remote .joystick .pad').draggable({
             drag: function (event, ui) {
-                if ( ! Remote.isInsideCircle(ui.position.left, -ui.position.top) ) {
-                    console.log('outside');
-                } else {
-                    console.log('inside');
+                if ( ! Joystick.isInsideCircle(ui.position.left, -ui.position.top) ) {
+                    return false;
                 }
             }
         });
@@ -41,6 +39,7 @@ var Joystick = {
      * Determine if a point is inside the circle defined as following :
      *     - Diameter : 200px
      *     - Center : (100px, -100px)
+     * Origin is based on the parent's container origin.
      *
      * @param number x : absciss of the point.
      * @param number y : ordinate of the point.
