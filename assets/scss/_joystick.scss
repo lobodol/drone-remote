@@ -1,0 +1,95 @@
+#remote {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: flex-end;
+  padding-bottom: 20px;
+
+  .joystick {
+    position: relative;
+
+    width: 200px;
+    height: 200px;
+
+    border-radius: 50%;
+
+    background-color: #1a1a1a;
+
+    box-shadow: 0 0 30px black inset;
+
+    &:before {
+      position: absolute;
+      content: "";
+      display: block;
+      width: 214px;
+      height: 214px;
+
+      top: -7px;
+      left: -7px;
+
+      border-radius: 50%;
+
+      z-index: -1;
+
+      background: #919191; /* Old browsers */
+      background: radial-gradient(ellipse at center,  #919191 0%,#e8e8e8 10%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#919191', endColorstr='#e8e8e8',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+
+      border: solid 1px black;
+
+      box-shadow: 0 -10px 10px rgba(0,0,0,0.5), 0 10px 10px rgba(255,255,255,0.5);
+    }
+
+    .pad {
+      position: absolute;
+      z-index: 10;
+
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+
+      top: 50%;
+      left: 50%;
+
+      margin-left: -35px;
+      margin-top: -35px;
+
+      box-shadow: 0 0 30px rgba(0,0,0,0.75);
+
+      background: #e8e8e8; /* Old browsers */
+      background: linear-gradient(to bottom,  #e8e8e8 0%,#c1c1c1 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e8e8e8', endColorstr='#c1c1c1',GradientType=0 ); /* IE6-9 */
+
+      &:after {
+        position: relative;
+        content: "";
+        display: block;
+        width: 60px;
+        height: 60px;
+
+        border-radius: 50%;
+
+        left: 5px;
+        top: 5px;
+
+        background: #e8e8e8; /* Old browsers */
+        background: linear-gradient(to bottom,  #c1c1c1 0%, #e8e8e8 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c1c1c1', endColorstr='#e8e8e8',GradientType=0 ); /* IE6-9 */
+      }
+    }
+  }
+
+  // Right joystick : controls Throttle and roll
+  #rjoystick {
+    .pad {
+      top: auto;
+      bottom: 0;
+    }
+  }
+}
+
+
+
+
+
+
