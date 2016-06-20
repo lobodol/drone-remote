@@ -33,23 +33,51 @@ var Joystick = {
      * @return boolean
      */
     init: function() {
-        $('#remote .joystick .pad').draggable({
-            drag: function (event, ui) {
-                if ( ! Joystick.isInsideCircle(ui.position.left, -ui.position.top) ) {
-                    return false;
-                }
-
-                var parent = $(this).parent().attr('id');
-
-                if (parent == 'rjoystick') {
-                    Joystick.updateYawThrottle(ui.position.left, -ui.position.top);
-                } else if (parent == 'ljoystick') {
-                    Joystick.updatePitchRoll(ui.position.left, -ui.position.top);
-                }
-
-                return false;
-            }
+        interact('.pad').draggable({
+            onmove: Joystick.dragMoveListener,
         });
+
+        $('#stabilize').click(function() {
+            navigator.vibrate(50);
+
+            $('#rjoystick .pad').css('transition', 'all 0.25s').css('transform', 'translate(0px, 0px)');
+        });
+    },
+
+    /**
+     * Callback of draggable.onmove listener.
+     *
+     * @param event
+     */
+    dragMoveListener : function(event) {
+        var target = event.target;
+
+        if (!Joystick.isInsideCircle($(target).position().left, -$(target).position().top)) {
+            // Calculate point coordinates
+            var new_coordinates = Joystick.getClosestInnerPoint($(target).position().left, -$(target).position().top);
+
+            if ($(target).parent().attr('id') == 'ljoystick') {
+                var dataY = -new_coordinates[1]-200;
+            } else {
+                var dataY = -new_coordinates[1]-100;
+            }
+
+            target.setAttribute('data-x', new_coordinates[0]-100);
+            target.setAttribute('data-y', dataY);
+        }
+
+        // Keep the dragged position in the data-x/data-y attributes
+        var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+        var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+        // translate the element
+        target.style.webkitTransform =
+            target.style.transform =
+                'translate(' + x + 'px, ' + y + 'px)';
+
+        // update the posiion attributes
+        target.setAttribute('data-x', x);
+        target.setAttribute('data-y', y);
     },
 
     /**
@@ -91,7 +119,7 @@ var Joystick = {
      * @param number y : ordinate of the pad.
      */
     updateYawThrottle: function (x, y) {
-
+        // TODO
     },
 
     /**
@@ -101,6 +129,48 @@ var Joystick = {
      * @param number y : ordinate of the pad.
      */
     updatePitchRoll: function(x, y) {
+        // TODO
+    },
 
+    /**
+     * Get the coordinates of the point being on the circle and closest from the passed point.
+     *
+     * @param number padX : absciss of the point.
+     * @param number padY : ordinate f the point.
+     * @returns {*[]}
+     */
+    getClosestInnerPoint: function(padX, padY) {
+        // Coordinates of the circle
+        var circleX = 100;
+        var circleY = -100;
+        var radius  = 100;
+
+        // Droite y = ax + b
+        var coeffDir = (padY - circleY) / (padX - circleX); // a
+        var ordOr    = padY - coeffDir*padX;                // b
+
+        // y = ax2 + bx + c
+        var a = 1 + Math.pow(coeffDir, 2);
+        var b = -2*circleX + 2*coeffDir*(ordOr - circleY);
+        var c = Math.pow((ordOr - circleY), 2) - Math.pow(radius, 2) + Math.pow(circleX, 2);
+
+        // delta = b2 -4ac
+        var delta = Math.pow(b, 2) - 4*a*c;
+
+        // x1 = (-b - sqrt(delta)) / 2a
+        var x1 = (-1*b - Math.sqrt(delta)) / (2*a);
+        // x2 = (-b + sqrt(delta)) / 2a
+        var x2 = (-1*b + Math.sqrt(delta)) / (2*a);
+
+
+        if (Math.abs(padX-x1) < Math.abs(padX-x2)) {
+            var x_final = Math.trunc(x1);
+            var y_final = Math.trunc(coeffDir*x1 + ordOr);
+        } else {
+            var x_final = Math.trunc(x2);
+            var y_final = Math.trunc(coeffDir*x2 + ordOr);
+        }
+
+        return [x_final, y_final];
     }
 };
