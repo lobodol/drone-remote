@@ -49,8 +49,12 @@ var Joystick = {
             navigator.vibrate(50);
         });
 
-        $('#stabilize').click(function() {
-            Joystick.animateToPosition('#rjoystick .pad', 0, 0);
+        // When activate auto-return.
+        $('#autoreturn').click(function() {
+            if ($('#autoreturn:checked').length) {
+                Joystick.animateToPosition('#rjoystick .pad', 0, 0);
+                Joystick.animateToPosition('#ljoystick .pad', 0, $('#ljoystick .pad').attr('data-y'));
+            }
         });
     },
 
