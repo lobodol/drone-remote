@@ -4,24 +4,30 @@
 var Joystick = {
 
     /**
+     * Yaw
      * [0, 360]
      * @var number
      */
     yaw: 0,
 
     /**
-     * [0, 900]
+     * Pitch [-45.0, +45.0]
+     * Offset +45 to have positive values : [0.0, +90.0]
+     * x10 to have integers : [0, 900]
      * @var number
      */
     pitch: 0,
 
     /**
-     * [0, 900]
+     * Roll [-45.0, +45.0]
+     * Offset +45 to have positive values : [0.0, +90.0]
+     * x10 to have integers : [0, 900]
      * @var number
      */
     roll: 0,
 
     /**
+     * Throttle
      * [0, 100]
      * @var number
      */
@@ -35,13 +41,66 @@ var Joystick = {
     init: function() {
         interact('.pad').draggable({
             onmove: Joystick.dragMoveListener,
+            onend: Joystick.autoReturn,
+        });
+
+        // Perform a vibration when click on buttons.
+        $('.button').click(function() {
+            navigator.vibrate(50);
         });
 
         $('#stabilize').click(function() {
-            navigator.vibrate(50);
-
-            $('#rjoystick .pad').css('transition', 'all 0.25s').css('transform', 'translate(0px, 0px)');
+            Joystick.animateToPosition('#rjoystick .pad', 0, 0);
         });
+    },
+
+    /**
+     * Manage pads behavior when released depending on auto-return button's state.
+     * If auto-return is checked, pads will be auto centered when released.
+     * Do nothing otherwise.
+     *
+     * @param event
+     */
+    autoReturn: function(event) {
+        if ($('#autoreturn:checked').length == 0) {
+            return false;
+        }
+
+        var target   = event.target;
+        var joystick = $(target).parent();
+
+        if (joystick.attr('id') == 'rjoystick') {
+            // Pitch/Roll joystick.
+            var x = 0;
+            var y = 0;
+        } else if (joystick.attr('id') == 'ljoystick') {
+            // Yaw/Throttle joystick.
+            var x = 0;
+            var y = target.getAttribute('data-y');
+        } else {
+            return false;
+        }
+
+        Joystick.animateToPosition(target, x, y);
+    },
+
+    /**
+     * Move pad to desired position with soft transition.
+     *
+     * @param mixed  target : pad to move.
+     * @param number x      : absciss of the destination.
+     * @param number y      : ordinate of the destination.
+     */
+    animateToPosition: function(target, x, y) {
+        $(target)
+            .addClass('transition')
+            .css('transform', 'translate(' + x + 'px, ' + y + 'px)')
+            .attr('data-x', x)
+            .attr('data-y', y);
+
+        setTimeout(function() {
+            $(target).removeClass('transition');
+        }, 250);
     },
 
     /**
@@ -53,7 +112,7 @@ var Joystick = {
         var target = event.target;
 
         if (!Joystick.isInsideCircle($(target).position().left, -$(target).position().top)) {
-            // Calculate point coordinates
+            // Calculate point coordinates.
             var new_coordinates = Joystick.getClosestInnerPoint($(target).position().left, -$(target).position().top);
 
             if ($(target).parent().attr('id') == 'ljoystick') {
@@ -66,16 +125,16 @@ var Joystick = {
             target.setAttribute('data-y', dataY);
         }
 
-        // Keep the dragged position in the data-x/data-y attributes
+        // Keep the dragged position in the data-x/data-y attributes.
         var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
         var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
 
-        // translate the element
+        // Translate the element.
         target.style.webkitTransform =
             target.style.transform =
                 'translate(' + x + 'px, ' + y + 'px)';
 
-        // update the posiion attributes
+        // Update the position attributes.
         target.setAttribute('data-x', x);
         target.setAttribute('data-y', y);
     },
@@ -100,9 +159,9 @@ var Joystick = {
         var a        = diameter/2;
         var b        = -diameter/2;
 
-        // Left par of the equation
+        // Left par of the equation.
         var left = Math.pow((x - a), 2) + Math.pow((y - b), 2);
-        // Right part of the equation
+        // Right part of the equation.
         var right = Math.pow(radius, 2);
 
         if (left <= right) {
