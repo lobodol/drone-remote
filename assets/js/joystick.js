@@ -228,8 +228,6 @@ var Joystick = {
             // No real roots.
             var x_final = padX;
 
-            console.log(padY);
-
             if (padY >= 0) {
                 var y_final = 0;
             } else {
