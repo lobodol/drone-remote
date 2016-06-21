@@ -209,8 +209,12 @@ var Joystick = {
         var radius  = 100;
 
         // Droite y = ax + b
-        var coeffDir = (padY - circleY) / (padX - circleX); // a
-        var ordOr    = padY - coeffDir*padX;                // b
+        if (padX == circleX) {
+            var coeffDir = 0;
+        } else {
+            var coeffDir = (padY - circleY) / (padX - circleX); // a
+        }
+        var ordOr    = padY - coeffDir*padX;                    // b
 
         // y = ax2 + bx + c
         var a = 1 + Math.pow(coeffDir, 2);
@@ -220,18 +224,32 @@ var Joystick = {
         // delta = b2 -4ac
         var delta = Math.pow(b, 2) - 4*a*c;
 
-        // x1 = (-b - sqrt(delta)) / 2a
-        var x1 = (-1*b - Math.sqrt(delta)) / (2*a);
-        // x2 = (-b + sqrt(delta)) / 2a
-        var x2 = (-1*b + Math.sqrt(delta)) / (2*a);
+        if (delta < 0) {
+            // No real roots.
+            var x_final = padX;
 
+            console.log(padY);
 
-        if (Math.abs(padX-x1) < Math.abs(padX-x2)) {
-            var x_final = Math.trunc(x1);
-            var y_final = Math.trunc(coeffDir*x1 + ordOr);
+            if (padY >= 0) {
+                var y_final = 0;
+            } else {
+                var y_final = -2*radius;
+            }
         } else {
-            var x_final = Math.trunc(x2);
-            var y_final = Math.trunc(coeffDir*x2 + ordOr);
+
+            // x1 = (-b - sqrt(delta)) / 2a
+            var x1 = (-1*b - Math.sqrt(delta)) / (2*a);
+            // x2 = (-b + sqrt(delta)) / 2a
+            var x2 = (-1*b + Math.sqrt(delta)) / (2*a);
+
+
+            if (Math.abs(padX-x1) < Math.abs(padX-x2)) {
+                var x_final = Math.trunc(x1);
+                var y_final = Math.trunc(coeffDir*x1 + ordOr);
+            } else {
+                var x_final = Math.trunc(x2);
+                var y_final = Math.trunc(coeffDir*x2 + ordOr);
+            }
         }
 
         return [x_final, y_final];
