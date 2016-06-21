@@ -86,6 +86,12 @@ var Joystick = {
         }
 
         Joystick.animateToPosition(target, x, y);
+
+        if ($(target).parent().attr('id') == 'ljoystick') {
+            Joystick.updateYawThrottle(x, y);
+        } else {
+            Joystick.updatePitchRoll(x, y);
+        }
     },
 
     /**
@@ -141,6 +147,12 @@ var Joystick = {
         // Update the position attributes.
         target.setAttribute('data-x', x);
         target.setAttribute('data-y', y);
+
+        if ($(target).parent().attr('id') == 'ljoystick') {
+            Joystick.updateYawThrottle(x, y);
+        } else {
+            Joystick.updatePitchRoll(x, y);
+        }
     },
 
     /**
@@ -178,21 +190,47 @@ var Joystick = {
     /**
      * Update yaw & throttle values from the pad coordinates.
      *
-     * @param number x : absciss of the pad.
-     * @param number y : ordinate of the pad.
+     * @param number x : absciss of the pad [-100, 100].
+     * @param number y : ordinate of the pad [-200, 0].
      */
     updateYawThrottle: function (x, y) {
-        // TODO
+        if (y > 0) {
+            y = 0;
+        } else if (y < -200) {
+            y = -200;
+        }
+
+        if (x > 100) {
+            x = 100;
+        } else if (x < -100) {
+            x = -100;
+        }
+
+        Joystick.yaw      = (x + 100) * 1.8; // [0, 360]
+        Joystick.throttle = (-1 * y) / 2;    // [0, 100]
     },
 
     /**
      * Update pitch & roll from the pad coordinates.
      *
-     * @param number x : absciss of the pad.
-     * @param number y : ordinate of the pad.
+     * @param number x : absciss of the pad [-100, 100].
+     * @param number y : ordinate of the pad [-100, 100].
      */
     updatePitchRoll: function(x, y) {
-        // TODO
+        if (x < -100) {
+            x = -100;
+        } else if (x > 100) {
+            x = 100;
+        }
+
+        if (y < -100) {
+            y = -100;
+        } else if (y > 100) {
+            y = 100;
+        }
+
+        Joystick.roll  = (x + 100) * 4.5; // [0, 900];
+        Joystick.pitch = (y + 100) * 4.5; // [0, 900];
     },
 
     /**
