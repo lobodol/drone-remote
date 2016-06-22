@@ -208,6 +208,8 @@ var Joystick = {
 
         Joystick.yaw      = parseInt((x + 100) * 1.8); // [0, 360]
         Joystick.throttle = parseInt((-1 * y) / 2);    // [0, 100]
+
+        Communication.sendInstructions(Joystick.yaw, Joystick.pitch, Joystick.roll, Joystick.throttle);
     },
 
     /**
@@ -231,6 +233,8 @@ var Joystick = {
 
         Joystick.roll  = parseInt((x + 100) * 4.5); // [0, 900];
         Joystick.pitch = parseInt((y + 100) * 4.5); // [0, 900];
+
+        Communication.sendInstructions(Joystick.yaw, Joystick.pitch, Joystick.roll, Joystick.throttle);
     },
 
     /**
