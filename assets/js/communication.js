@@ -1,7 +1,23 @@
 var Communication = {
+    /**
+     * Hex value for STOP byte
+     * @var string
+     */
+    STX: '02',
+
+    /**
+     * Hex value for STOP byte
+     * @var string
+     */
+    ETX: '03',
+
+    /**
+     * Initialize object
+     */
     initialize: function() {
         document.addEventListener('deviceready', this.onDeviceReady, false);
     },
+
     onDeviceReady: function() {
         var potText = document.getElementById('pot');
         var delta = document.getElementById('delta');
@@ -83,22 +99,46 @@ var Communication = {
      * @param number throttle : throttle command [0, 100]
      */
     sendInstructions: function(yaw, pitch, roll, throttle) {
-        var message = new Uint8Array(10);
-        message[0] = 0x02;
-        message[1] = yaw >> 8;   // Yaw MSB
-        message[2] = yaw;        // Yaw LSB
-        message[3] = pitch >> 8; // Pitch MSB
-        message[4] = pitch;      // Pitch LSB
-        message[5] = roll >> 8;  // Roll MSB
-        message[6] = roll;       // Roll LSB
-        message[7] = throttle;   // Throttle
-        var checksum = message[0] ^ message[1] ^ message[2] ^ message[3] ^ message[4] ^ message[5] ^ message[6] ^ message[7];
-        message[8] = checksum;
-        message[9] = 0x03;
+        // Convert values to hexadecimal
+        var yaw_hex      = Communication.format_byte(yaw.toString(16), 2);
+        var pitch_hex    = Communication.format_byte(pitch.toString(16), 2);
+        var roll_hex     = Communication.format_byte(roll.toString(16), 2);
+        var throttle_hex = Communication.format_byte(throttle.toString(16), 1);
+
+        // Message sent to the Arduino
+        var message      = [];
+
+        message[0] = Communication.STX;      // START byte
+        message[1] = yaw_hex.substr(0, 2);   // Yaw MSB
+        message[2] = yaw_hex.substr(2, 2);   // Yaw LSB
+        message[3] = pitch_hex.substr(0, 2); // Pitch MSB
+        message[4] = pitch_hex.substr(2, 2); // Pitch LSB
+        message[5] = roll_hex.substr(0, 2);  // Roll MSB
+        message[6] = roll_hex.substr(2, 2);  // Roll LSB
+        message[7] = throttle_hex;           // Throttle
+        message[8] = '00';                   // Checksum : calculated by the Arduino, not here
+        message[9] = Communication.ETX;      // STOP byte
+
+        console.log(message);
 
         for (var i = 0; i < message.length; i++) {
-            serial.write(message[i]);
+            serial.writeHex(message[i]);
         }
+    },
+
+    /**
+     * Format a value by prepending '0' if necessary to match byte length.
+     *
+     * @param string value   : hex representation of a value to format on n bytes
+     * @param number nb_byte : number of byte for the final value
+     * @returns string
+     */
+    format_byte: function(value, nb_byte) {
+        while (value.length < 2*nb_byte) {
+            value = '0' + value;
+        }
+
+        return value;
     }
 };
 
