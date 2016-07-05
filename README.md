@@ -4,6 +4,16 @@ This project is based on **Apache Corodva**.
 This project is a virtual quadcopter remote embeded in smartphone.
 The purpose of this remote is to pilot a quadcopter from a smartphone.
 
+But, it doesn't control the quacopter directly. The app send instructions on the serial port on wich an Arduino must be pluged in.
+This is the Arduino wich really send Instruction to an other through RF 433Mhz.
+
+```
+ _\/
+   \+------------+      +---------+      +------------+
+    | RF emitter |------| Arduino |------| Smartphone |
+    +------------+      +---------+      +------------+
+```    
+
 Currently, works for Android smartphones.
 
 
