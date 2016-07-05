@@ -28,3 +28,5 @@ gulp build
 cd ..
 cordova run android
 ````
+![Screenshot of the app]
+(https://raw.githubusercontent.com/lobodol/drone-remote/master/screenshots/screenshot1.png)
