@@ -23,20 +23,28 @@ Currently, works for Android smartphones.
 
 
 ## Installation
-```
-# Download sources
-git clone https://github.com/lobodol/drone-remote
 
-# Install node dependencies
+### Download sources
+```
+git clone https://github.com/lobodol/drone-remote
+```
+
+### Install node dependencies
+```
 cd drone-remote/gulp
 npm install
+``` 
 
-# Build assets
+### Build assets
+```
 gulp build
+```
 
-# Plug your smartphone to your computer, then run the app
+### Plug your smartphone to your computer, then run the app
+```
 cd ..
 cordova run android
-````
-![Screenshot of the app]
+```
+
+![Image of the app]
 (https://raw.githubusercontent.com/lobodol/drone-remote/master/screenshots/screenshot1.png)
